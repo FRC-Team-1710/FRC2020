@@ -12,18 +12,25 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+import edu.wpi.first.wpilibj.Counter;
+import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.DigitalSource;
 
 /**
  * Add your docs here.
  */
 
 public class Limelight {
+
     //shooting anywhere on field
-    public static double rpm;
-    public NetworkTable shooterTable;
-    public NetworkTable intakeTable;
+    public static double yShooter, validShooter;
+    public NetworkTable shooterTable, intakeTable;
+    public static DigitalInput in;
+    public static LidarLitePWM lidar;
     public static void initShooter() {
-        Flywheel.initialize();
+        //flywheel.initialize();
+        in = new DigitalInput(0);
+        lidar = new LidarLitePWM(in);
     }
 
     public static void limelight_periodic() {
@@ -45,28 +52,6 @@ public class Limelight {
         SmartDashboard.putNumber("ShooterLimelightY", yShooter);
         SmartDashboard.putNumber("ShooterLimelightArea", areaShooter);
         SmartDashboard.putNumber("ShooterifTarget", validShooter);
-
-        //calculating distnace and rpm of flywheel
-        double d = 98.25 - 36 / Math.tan(yShooter);
-        SmartDashboard.putNumber("ShooterDistance", d);
-        double v;
-
-        if (validShooter == 1){
-        //figuring out what rpm for flywheel
-            if (d >= 110 && d <= 180) {
-                v = 0.0454 * d * d - 14.899 * d + 1610.3;
-                rpm = v * 60 / (3.1415 * 4); //c of wheel (in)
-            } else if (d >= 190 && d <= 450){
-                v = 0.377 * d + 313.75;
-                rpm = v * 60 / (3.1415 * 4); //c of wheel (in)
-            } else if (rpm > 5700){
-                rpm = 5700;
-            }
-            Flywheel.flywheel_periodic(rpm);
-            SmartDashboard.putNumber("ShooterRPM", rpm);
-        } else {
-            rpm = 0;
-        }
         
         //driving to loading station
         NetworkTable intakeTable = NetworkTableInstance.getDefault().getTable("limelight-intake");

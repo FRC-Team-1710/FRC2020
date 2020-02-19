@@ -7,7 +7,9 @@
 
 package frc.robot;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.kauailabs.navx.frc.AHRS;
+import com.revrobotics.CANSparkMax;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DigitalSource;
@@ -26,6 +28,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  * project.
  */
 public class Robot extends TimedRobot {
+  public static CANSparkMax climber;
   public static XboxController driverController;
   private static final String kDefaultAuto = "Default";
   private static final String kCustomAuto = "My Auto";
@@ -51,7 +54,6 @@ public class Robot extends TimedRobot {
     MechStick = new XboxController(1);
     LidarPWMSlot = new DigitalInput(0);
     DistanceLidar = new LidarLitePWM(LidarPWMSlot);
-    
     LEDs.setIncramentBall();
     
   }
@@ -130,16 +132,24 @@ public class Robot extends TimedRobot {
         }
       }
       Limelight.limelight_periodic();
-    
-      // if(driverController.getBumperPressed(Hand.kRight)) {
-      //   Limelight.rpm += 100;//might need to increase for faster adjustments
-      // }else if(driverController.getBumperPressed(Hand.kLeft)){
-      //   Limelight.rpm -= 100;//might need to decrease for faster adjustments
-      // }else if(driverController.getBButtonPressed()){
-      //   Limelight.rpm = 0;
-      // }
-      // Flywheel.flywheel_periodic(Limelight.rpm);
+      Shooter.ShooterCalc();
+      Shooter.SmartDashboard();
+    if(driverController.getBumperPressed(Hand.kRight)) {
+      Shooter.rpmShooter += 100;//might need to increase for faster adjustments
+    }else if(driverController.getBumperPressed(Hand.kLeft)){
+      Shooter.rpmShooter -= 100;//might need to decrease for faster adjustments
+    }else if(driverController.getBButtonPressed()){//change to different button
+      Shooter.rpmShooter = 0;
+    }else if(driverController.getStartButton()){
+      Shooter.rpmShooter = Shooter.normalState;
     }
+
+    if(driverController.getTriggerAxis(Hand.kLeft) != 0){
+      Intake.intake.set(ControlMode.PercentOutput, driverController.getTriggerAxis(Hand.kLeft));
+      Intake.indexer_bot.follow(Intake.intake);
+      Intake.indexer_top.follow(Intake.intake);
+    }
+  }
 
   /**
    * This function is called periodically during test mode.
