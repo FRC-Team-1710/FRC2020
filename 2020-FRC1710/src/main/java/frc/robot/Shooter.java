@@ -27,7 +27,7 @@ public class Shooter {
         public static double difference = Math.abs(lidarD - limelightD);
         public static double normalState = 2293.055449; //make constant rpm for match
         public static double rpmShooter = normalState; 
-        public static double rpmFeeder = 1/2 * rpmShooter;
+        public static double rpmFeeder = 1/2 * rpmShooter; //subject to change with testing
         public static double pi = Math.PI;
         public static double v;
 
@@ -42,19 +42,19 @@ public class Shooter {
         //figuring out what rpm for flywheel
             if(lidarD <= 20){
                 v = 223;
-                rpmShooter = v * 60 / (pi * 4); //c of wheel (in)
+                rpmShooter = v * 120 / (pi * 4); //c of wheel (in)git
                 //short distance hood
                 //Drive.Shooter1.set(Value.kReverse);
                 //Drive.Shooter1.set(Value.kReverse);
             } else if (lidarD >= 134.69 && lidarD <= 194.69) {
                 v = 0.0383 * lidarD * lidarD - 14.291 * lidarD + 1773.8;
-                rpmShooter = v * 60 / (pi * 4); //c of wheel (in)
+                rpmShooter = v * 120 / (pi * 4); //c of wheel (in)
                 //long distance hood
                 //Drive.Shooter1.set(Value.kForward);
                 //Drive.Shooter1.set(Value.kForward);
             } else if (lidarD >= 204.69 && lidarD <= 514.69){
                 v = 0.0004 * lidarD * lidarD + 0.0641 * lidarD + 404.04;
-                rpmShooter = v * 60 / (pi * 4); //c of wheel (in)
+                rpmShooter = v * 120 / (pi * 4); //c of wheel (in)
                 //long distance hood
                 //Drive.Shooter1.set(Value.kForward);
                 //Drive.Shooter1.set(Value.kForward);
